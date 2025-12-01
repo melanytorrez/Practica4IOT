@@ -1,7 +1,5 @@
 #include "SmartHome.h"
 
-// --- CONSTANTES ---
-// (Movimos todas las constantes aquí para mantener el .h limpio)
 #define PIR_PIN 23
 #define LED_SALA_PIN 22
 #define LED_HAB_PIN 21
@@ -27,13 +25,13 @@ const char* UPDATE_DELTA_TOPIC = "$aws/things/MiCasa/shadow/update/delta";
 const char* RFID_CHECK_REQUEST_TOPIC = "MiCasa/rfid/checkRequest";
 const char* RFID_CHECK_RESPONSE_TOPIC = "MiCasa/rfid/checkResponse";
 
-// Certificados (los mismos que antes)
+// Certificates (same as before)
 extern const char AMAZON_ROOT_CA1[] PROGMEM;
 extern const char CERTIFICATE[] PROGMEM;
 extern const char PRIVATE_KEY[] PROGMEM;
 
-// --- TRUCO PARA EL CALLBACK ---
-// Necesitamos una instancia global accesible por la función estática
+// --- TRICK FOR THE CALLBACK ---
+// Need a global instance accessible by the static function
 SmartHome* home_instance = nullptr;
 
 void SmartHome::staticMqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -42,20 +40,20 @@ void SmartHome::staticMqttCallback(char* topic, byte* payload, unsigned int leng
   }
 }
 
-// Interrupción del PIR
+// PIR interrupt
 volatile bool motionDetectedFlag = false;
 void IRAM_ATTR pirISR() {
   motionDetectedFlag = true;
 }
 
 
-// --- IMPLEMENTACIÓN DE LA CLASE SMARTHOME ---
+// --- IMPLEMENTATION OF THE SMARTHOME CLASS ---
 
 SmartHome::SmartHome() : 
   _mqttClient(_wiFiClient), 
   _stepperMotor(STEPS_PER_REV, IN1, IN3, IN2, IN4), 
   _mfrc522(RFID_SS_PIN, RFID_RST_PIN) {
-  home_instance = this; // Guardamos la instancia actual para el callback
+  home_instance = this; // Save current instance for the callback
 }
 
 void SmartHome::setup() {
@@ -92,7 +90,7 @@ void SmartHome::_setupHardware() {
   
   attachInterrupt(digitalPinToInterrupt(PIR_PIN), pirISR, CHANGE);
   
-  // Inicializar estados
+  // Initialize states
   _luzSalaState = "OFF";
   _luzHabState = "OFF";
   _luzCocinaState = "OFF";
